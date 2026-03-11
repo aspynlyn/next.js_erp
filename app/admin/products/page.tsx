@@ -455,82 +455,86 @@ export default function ProductsPage() {
             </table>
           </div>
         </div>
-<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:hidden">
-  {loading ? (
-    <div className="col-span-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-10 text-center text-[14px] text-[var(--color-text-secondary)] sm:col-span-2">
-      상품 목록을 불러오는 중입니다.
-    </div>
-  ) : products.length === 0 ? (
-    <div className="col-span-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-10 text-center text-[14px] text-[var(--color-text-secondary)] sm:col-span-2">
-      조회된 상품이 없습니다.
-    </div>
-  ) : (
-    products.map((product) => (
-      <div
-        key={product.id}
-        className="flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] p-4"
-      >
-        {/* 상단 */}
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <p className="truncate text-[11px] text-[var(--color-text-muted)]">
-              {product.code}
-            </p>
-            <p className="mt-1 truncate text-[14px] font-semibold text-[var(--color-text-primary)]">
-              {product.name}
-            </p>
-          </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:hidden">
+          {loading ? (
+            <div className="col-span-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-10 text-center text-[14px] text-[var(--color-text-secondary)] sm:col-span-2">
+              상품 목록을 불러오는 중입니다.
+            </div>
+          ) : products.length === 0 ? (
+            <div className="col-span-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-10 text-center text-[14px] text-[var(--color-text-secondary)] sm:col-span-2">
+              조회된 상품이 없습니다.
+            </div>
+          ) : (
+            products.map((product) => (
+              <div
+                key={product.id}
+                className="flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] p-4"
+              >
+                {/* 상단 */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-[11px] text-[var(--color-text-muted)]">
+                      {product.code}
+                    </p>
+                    <p className="mt-1 truncate text-[14px] font-semibold text-[var(--color-text-primary)]">
+                      {product.name}
+                    </p>
+                  </div>
 
-          <span
-            className={`shrink-0 rounded-full border px-2 py-[2px] text-[10px] font-semibold ${
-              product.isSale
-                ? 'border-[var(--color-success)] text-[var(--color-success)]'
-                : 'border-[var(--color-danger)] text-[var(--color-danger)]'
-            }`}
-          >
-            {product.isSale ? '활성' : '비활성'}
-          </span>
+                  <span
+                    className={`shrink-0 rounded-full border px-2 py-[2px] text-[10px] font-semibold ${
+                      product.isSale
+                        ? 'border-[var(--color-success)] text-[var(--color-success)]'
+                        : 'border-[var(--color-danger)] text-[var(--color-danger)]'
+                    }`}
+                  >
+                    {product.isSale ? '활성' : '비활성'}
+                  </span>
+                </div>
+
+                {/* 구분선 */}
+                <div className="my-3 h-px bg-[var(--color-border)]" />
+
+                {/* 정보 */}
+                <div className="space-y-1 text-[12px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--color-text-muted)]">단가</span>
+                    <span className="font-medium text-[var(--color-text-primary)]">
+                      {product.price.toLocaleString()}원
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--color-text-muted)]">
+                      현재 재고
+                    </span>
+                    <span className="font-medium text-[var(--color-text-primary)]">
+                      {product.currentStock.toLocaleString()}개
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--color-text-muted)]">
+                      안전 재고
+                    </span>
+                    <span className="font-medium text-[var(--color-text-primary)]">
+                      {product.safetyStock.toLocaleString()}개
+                    </span>
+                  </div>
+                </div>
+
+                {/* 버튼 */}
+                <button
+                  type="button"
+                  onClick={() => openEditModal(product.id)}
+                  className="mt-4 rounded-lg border border-[var(--color-border)] py-2 text-[13px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-surface)]"
+                >
+                  수정
+                </button>
+              </div>
+            ))
+          )}
         </div>
-
-        {/* 구분선 */}
-        <div className="my-3 h-px bg-[var(--color-border)]" />
-
-        {/* 정보 */}
-        <div className="space-y-1 text-[12px]">
-          <div className="flex items-center justify-between">
-            <span className="text-[var(--color-text-muted)]">단가</span>
-            <span className="font-medium text-[var(--color-text-primary)]">
-              {product.price.toLocaleString()}원
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-[var(--color-text-muted)]">현재 재고</span>
-            <span className="font-medium text-[var(--color-text-primary)]">
-              {product.currentStock.toLocaleString()}개
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-[var(--color-text-muted)]">안전 재고</span>
-            <span className="font-medium text-[var(--color-text-primary)]">
-              {product.safetyStock.toLocaleString()}개
-            </span>
-          </div>
-        </div>
-
-        {/* 버튼 */}
-        <button
-          type="button"
-          onClick={() => openEditModal(product.id)}
-          className="mt-4 rounded-lg border border-[var(--color-border)] py-2 text-[13px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-surface)]"
-        >
-          수정
-        </button>
-      </div>
-    ))
-  )}
-</div>
 
         <div className="mt-auto pt-4">
           <div className="hidden items-center justify-center md:flex">
@@ -734,16 +738,22 @@ export default function ProductsPage() {
                 <label className="mb-2 block text-[13px] font-semibold text-[var(--color-text-secondary)]">
                   판매 여부
                 </label>
-                <select
-                  value={form.isSale ? 'true' : 'false'}
-                  onChange={(e) =>
-                    handleChangeForm('isSale', e.target.value === 'true')
-                  }
-                  className={getInputClass(false)}
-                >
-                  <option value="true">활성</option>
-                  <option value="false">비활성</option>
-                </select>
+                <div className="relative">
+                  <select
+                    value={form.isSale ? 'true' : 'false'}
+                    onChange={(e) =>
+                      handleChangeForm('isSale', e.target.value === 'true')
+                    }
+                    className={`${getInputClass(false)} appearance-none pr-11 font-medium`}
+                  >
+                    <option value="true">활성</option>
+                    <option value="false">비활성</option>
+                  </select>
+
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[var(--color-primary)]">
+                    ▼
+                  </span>
+                </div>
               </div>
             </div>
 

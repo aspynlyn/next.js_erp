@@ -13,18 +13,18 @@ export default function AdminLayout({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-  const handleResize = () => {
-    if (window.innerWidth >= 768) {
-      setIsMobileMenuOpen(false);
-    }
-  };
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
 
-  window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize);
 
-  return () => {
-    window.removeEventListener('resize', handleResize);
-  };
-}, []);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const menuList = [
     {
@@ -41,7 +41,7 @@ export default function AdminLayout({
     },
     {
       name: '거래처 관리',
-      href: '/admin/clients',
+      href: '/admin/partners',
       title: '거래처 관리',
       description: '거래처 정보를 확인하고 관리할 수 있습니다.',
     },
