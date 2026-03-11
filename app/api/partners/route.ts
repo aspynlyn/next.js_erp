@@ -51,10 +51,7 @@ export async function GET(req: NextRequest) {
     const partners = await prisma.partner.findMany({
       where: search
         ? {
-            OR: [
-              { name: { contains: search } },
-              { phone: { contains: search } },
-            ],
+            name: { contains: search },
           }
         : {},
       orderBy: {
