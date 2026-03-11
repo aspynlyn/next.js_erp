@@ -1,7 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-
   /* 색상 시스템 */
 
   --color-primary: #6034a7;
@@ -16,14 +15,13 @@
   --color-warning: #f59e0b;
   --color-danger: #dc2626;
 
+  --color-success-border: rgba(22, 163, 74, 0.35);
+  --color-danger-border: rgba(220, 38, 38, 0.35);
+
   --color-white: #ffffff;
   --color-border: #e2e8f0;
   --color-surface: #f8f9fa;
   --color-input-placeholder: #cbd5e1;
-
-  --color-danger-soft: rgba(239, 68, 68, 0.06);
-  --color-danger-border: rgba(239, 68, 68, 0.2);
-  --color-danger-ring: rgba(239, 68, 68, 0.08);
 
   --color-primary-ring: rgba(96, 52, 167, 0.1);
   --color-grid: rgba(0, 0, 0, 0.04);
