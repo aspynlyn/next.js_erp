@@ -26,44 +26,86 @@ enum MovementType {
   ADJUST
 }
 
+enum SalesOrderStatus {
+  RECEIVED
+  SHIPPED
+  CANCELED
+}
+
+enum PurchaseOrderStatus {
+  REQUESTED
+  RECEIVED
+  CANCELED
+}
+
 model User {
-  uId        Int      @id @default(autoincrement())
-  uPassword  String
-  uUsername  String   @unique
-  uRole      Role
-  uCreatedAt DateTime @default(now())
-  uIsDelete  Boolean  @default(false)
+  id        Int      @id @default(autoincrement())
+  password  String
+  username  String   @unique
+  role      Role
+  createdAt DateTime @default(now())
+  isDelete  Boolean  @default(false)
 }
 
 model Product {
-  pdId           Int             @id @default(autoincrement())
-  pdCode         String          @unique
-  pdName         String
-  pdPrice        Int
-  pdSafetyStock  Int
-  pdCurrentStock Int
-  pdCreatedAt    DateTime        @default(now())
-  pdIsSale       Boolean         @default(true)
+  id           Int      @id @default(autoincrement())
+  code         String   @unique
+  name         String
+  price        Int
+  safetyStock  Int
+  currentStock Int
+  createdAt    DateTime @default(now())
+  isSale       Boolean  @default(true)
+
   stockMovements StockMovement[]
+  purchaseOrders PurchaseOrders[]
+  SalesOrders    SalesOrders[]
 }
 
 model Partner {
-  ptId        Int         @id @default(autoincrement())
-  ptName      String
-  ptType      PartnerType
-  ptPhone     String
-  ptEmail     String?
-  ptCreatedAt DateTime    @default(now())
-  ptIsActive  Boolean     @default(true)
+  id        Int         @id @default(autoincrement())
+  name      String
+  type      PartnerType
+  phone     String
+  email     String?
+  createdAt DateTime    @default(now())
+  isActive  Boolean     @default(true)
+
+  purchaseOrders PurchaseOrders[]
+  SalesOrders    SalesOrders[]
 }
 
 model StockMovement {
-  smId        Int          @id @default(autoincrement())
-  smProductId Int
-  smQuantity  Int
-  smType      MovementType
-  smMemo      String?
-  smCreatedAt DateTime     @default(now())
+  id        Int          @id @default(autoincrement())
+  productId Int
+  quantity  Int
+  type      MovementType
+  memo      String?
+  createdAt DateTime     @default(now())
 
-  product Product @relation(fields: [smProductId], references: [pdId])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model PurchaseOrders {
+  id        Int                 @id @default(autoincrement())
+  partnerId Int
+  productId Int
+  quantity  Int
+  status    PurchaseOrderStatus @default(REQUESTED)
+  createdAt DateTime            @default(now())
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model SalesOrders {
+  id        Int              @id @default(autoincrement())
+  partnerId Int
+  productId Int
+  quantity  Int
+  status    SalesOrderStatus @default(RECEIVED)
+  createdAt DateTime         @default(now())
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }
