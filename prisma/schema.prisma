@@ -26,15 +26,17 @@ enum MovementType {
   ADJUST
 }
 
-enum SalesOrderStatus {
+enum SaleOrderStatus {
   RECEIVED
-  SHIPPED
+  PROCESSING
+  COMPLETED
   CANCELED
 }
 
 enum PurchaseOrderStatus {
-  REQUESTED
-  RECEIVED
+  DRAFT
+  CONFIRMED
+  COMPLETED
   CANCELED
 }
 
@@ -57,9 +59,9 @@ model Product {
   createdAt    DateTime @default(now())
   isSale       Boolean  @default(true)
 
-  stockMovements StockMovement[]
-  purchaseOrders PurchaseOrders[]
-  SalesOrders    SalesOrders[]
+  purchaseOrderProducts PurchaseOrderProduct[]
+  saleOrderProducts     SaleOrderProduct[]
+  stockMovements        StockMovement[]
 }
 
 model Partner {
@@ -71,8 +73,8 @@ model Partner {
   createdAt DateTime    @default(now())
   isActive  Boolean     @default(true)
 
-  purchaseOrders PurchaseOrders[]
-  SalesOrders    SalesOrders[]
+  purchaseOrders PurchaseOrder[]
+  saleOrders     SaleOrder[]
 }
 
 model StockMovement {
@@ -82,30 +84,72 @@ model StockMovement {
   type      MovementType
   memo      String?
   createdAt DateTime     @default(now())
+  refId     Int?
 
   product Product @relation(fields: [productId], references: [id])
 }
 
-model PurchaseOrders {
+model PurchaseOrder {
   id        Int                 @id @default(autoincrement())
   partnerId Int
-  productId Int
-  quantity  Int
-  status    PurchaseOrderStatus @default(REQUESTED)
+  status    PurchaseOrderStatus @default(DRAFT)
   createdAt DateTime            @default(now())
 
   partner Partner @relation(fields: [partnerId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+
+  purchaseOrderProducts PurchaseOrderProduct[]
+  purchaseOrderStatuses PurchaseOrderStatusLog[]
 }
 
-model SalesOrders {
-  id        Int              @id @default(autoincrement())
+model PurchaseOrderProduct {
+  purchaseId Int
+  productId  Int
+  quantity   Int
+  unitPrice  Int
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseId], references: [id])
+  product       Product       @relation(fields: [productId], references: [id])
+
+  @@id([purchaseId, productId])
+}
+
+model PurchaseOrderStatusLog {
+  id         Int                 @id @default(autoincrement())
+  purchaseId Int
+  status     PurchaseOrderStatus
+  createdAt  DateTime            @default(now())
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseId], references: [id])
+}
+
+model SaleOrder {
+  id        Int             @id @default(autoincrement())
   partnerId Int
+  status    SaleOrderStatus @default(RECEIVED)
+  createdAt DateTime        @default(now())
+
+  partner           Partner              @relation(fields: [partnerId], references: [id])
+  saleOrderProducts SaleOrderProduct[]
+  saleOrderStatuses SaleOrderStatusLog[]
+}
+
+model SaleOrderProduct {
+  saleId    Int
   productId Int
   quantity  Int
-  status    SalesOrderStatus @default(RECEIVED)
-  createdAt DateTime         @default(now())
+  unitPrice Int
 
-  partner Partner @relation(fields: [partnerId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  saleOrder SaleOrder @relation(fields: [saleId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+
+  @@id([saleId, productId])
+}
+
+model SaleOrderStatusLog {
+  id        Int             @id @default(autoincrement())
+  saleId    Int
+  status    SaleOrderStatus
+  createdAt DateTime        @default(now())
+
+  saleOrder SaleOrder @relation(fields: [saleId], references: [id])
 }

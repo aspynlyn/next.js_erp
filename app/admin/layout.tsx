@@ -46,8 +46,13 @@ export default function AdminLayout({
       description: '거래처 정보를 확인하고 관리할 수 있습니다.',
     },
     {
+      name: '발주 관리',
+      href: '/admin/purchase-orders',
+      title: '발주 내역과 진행 상태를 관리할 수 있습니다.',
+    },
+    {
       name: '주문 관리',
-      href: '/admin/orders',
+      href: '/admin/sales-orders',
       title: '주문 내역과 진행 상태를 관리할 수 있습니다.',
     },
     {
