@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function AdminLayout({
@@ -10,6 +10,8 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function AdminLayout({
       name: '대시보드',
       href: '/admin/dashboard',
       title: '관리자 대시보드',
-      description: 'ERP 운영 현황을 한눈에 확인할 수 있습니다.',
+      description: '시스템 운영 현황을 한눈에 확인할 수 있습니다.',
     },
     {
       name: '상품 관리',
@@ -71,6 +73,34 @@ export default function AdminLayout({
     },
   ];
 
+  const handleLogout = async () => {
+    try {
+      setLogoutLoading(true);
+
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || '로그아웃 중 오류가 발생했습니다.');
+      }
+
+      router.replace('/login');
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : '로그아웃 중 오류가 발생했습니다.',
+      );
+    } finally {
+      setLogoutLoading(false);
+    }
+  };
   const currentMenu =
     menuList.find((menu) => pathname.startsWith(menu.href)) || menuList[0];
 
@@ -221,8 +251,13 @@ export default function AdminLayout({
             </div>
           </div>
 
-          <button className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-[13px] font-semibold text-white transition hover:opacity-90">
-            로그아웃
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={logoutLoading}
+            className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-[13px] font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {logoutLoading ? '처리 중...' : '로그아웃'}
           </button>
         </header>
 
@@ -238,11 +273,16 @@ export default function AdminLayout({
 
           <div className="flex items-center gap-4">
             <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-3 text-sm text-[var(--color-text-secondary)]">
-              관리자
+              admin님
             </div>
 
-            <button className="rounded-lg bg-[var(--color-primary)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90">
-              로그아웃
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={logoutLoading}
+              className="rounded-lg bg-[var(--color-primary)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {logoutLoading ? '처리 중...' : '로그아웃'}
             </button>
           </div>
         </header>

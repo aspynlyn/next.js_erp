@@ -87,23 +87,6 @@ export default function LoginPage() {
         </div>
 
         <div className="flex gap-10">
-          <div className="flex flex-col gap-1">
-            <span className="font-mono text-[28px] font-medium text-[var(--color-primary)]">
-              4
-            </span>
-            <span className="text-[11px] uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
-              핵심 모듈
-            </span>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <span className="font-mono text-[28px] font-medium text-[var(--color-primary)]">
-              100%
-            </span>
-            <span className="text-[11px] uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
-              실시간 재고
-            </span>
-          </div>
 
           <div className="flex flex-col gap-1">
             <span className="font-mono text-[28px] font-medium text-[var(--color-primary)]">
@@ -116,7 +99,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="relative z-10 flex w-[480px] shrink-0 items-center justify-center bg-[var(--color-white)] px-10 py-12 max-[900px]:w-full max-[900px]:px-6 max-[900px]:py-8">
+      <div className="relative z-10 flex w-[550px] shrink-0 items-center justify-center bg-[var(--color-white)] px-10 py-12 max-[900px]:w-full max-[900px]:px-6 max-[900px]:py-8">
         <div
           className="w-full max-w-[380px]"
           style={{ animation: 'fadeUp 0.5s ease both' }}

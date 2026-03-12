@@ -16,12 +16,11 @@ export async function POST() {
     });
 
     return res;
-
   } catch (error) {
     console.error('logout error:', error);
 
     return NextResponse.json(
-      { message: '로그인 아웃 중 오류가 발생했습니다.' },
+      { message: '로그아웃 중 오류가 발생했습니다.' },
       { status: 500 },
     );
   }

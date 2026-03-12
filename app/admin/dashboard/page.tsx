@@ -207,20 +207,17 @@ export default function DashboardPage() {
                 <table className="w-full table-fixed border-collapse">
                   <thead>
                     <tr className="bg-[var(--color-background)]">
-                      <th className="w-[18%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
+                      <th className="w-[25%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
                         상품 코드
                       </th>
-                      <th className="w-[30%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
+                      <th className="w-[25%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
                         상품명
                       </th>
-                      <th className="w-[16%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
+                      <th className="w-[25%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
                         현재 재고
                       </th>
-                      <th className="w-[16%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
+                      <th className="w-[25%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
                         안전 재고
-                      </th>
-                      <th className="w-[20%] border-b border-[var(--color-border)] px-4 py-3 text-center text-[13px] font-semibold text-[var(--color-text-secondary)]">
-                        상태
                       </th>
                     </tr>
                   </thead>
@@ -228,7 +225,7 @@ export default function DashboardPage() {
                     {loading ? (
                       <tr>
                         <td
-                          colSpan={5}
+                          colSpan={4}
                           className="px-4 py-10 text-center text-[15px] text-[var(--color-text-secondary)]"
                         >
                           재고 부족 상품을 불러오는 중입니다.
@@ -237,7 +234,7 @@ export default function DashboardPage() {
                     ) : dashboardData.lowStockProducts.length === 0 ? (
                       <tr>
                         <td
-                          colSpan={5}
+                          colSpan={4}
                           className="px-4 py-10 text-center text-[15px] text-[var(--color-text-secondary)]"
                         >
                           현재 재고 부족 상품이 없습니다.
@@ -252,7 +249,7 @@ export default function DashboardPage() {
                           <td className="px-4 py-4 text-center text-[15px] text-[var(--color-text-primary)]">
                             {product.code}
                           </td>
-                          <td className="px-4 py-4 text-center text-[15px] text-[var(--color-text-primary)]">
+                          <td className="truncate px-4 py-4 text-center text-[15px] text-[var(--color-text-primary)]">
                             {product.name}
                           </td>
                           <td className="px-4 py-4 text-center text-[15px] font-semibold text-[var(--color-danger)]">
@@ -260,11 +257,6 @@ export default function DashboardPage() {
                           </td>
                           <td className="px-4 py-4 text-center text-[15px] text-[var(--color-text-primary)]">
                             {product.safetyStock.toLocaleString()}개
-                          </td>
-                          <td className="px-4 py-4 text-center">
-                            <span className="inline-flex rounded-full border border-[var(--color-warning)] px-2.5 py-[3px] text-[10px] font-semibold text-[var(--color-warning)]">
-                              보충 필요
-                            </span>
                           </td>
                         </tr>
                       ))
@@ -289,19 +281,13 @@ export default function DashboardPage() {
                     key={product.id}
                     className="rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] p-4"
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="truncate text-[12px] text-[var(--color-text-muted)]">
-                          {product.code}
-                        </p>
-                        <p className="mt-1 truncate text-[15px] font-semibold text-[var(--color-text-primary)]">
-                          {product.name}
-                        </p>
-                      </div>
-
-                      <span className="shrink-0 rounded-full border border-[var(--color-warning)] px-2 py-[2px] text-[11px] font-semibold text-[var(--color-warning)]">
-                        보충 필요
-                      </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-[12px] text-[var(--color-text-muted)]">
+                        {product.code}
+                      </p>
+                      <p className="mt-1 truncate text-[15px] font-semibold text-[var(--color-text-primary)]">
+                        {product.name}
+                      </p>
                     </div>
 
                     <div className="my-3 h-px bg-[var(--color-border)]" />
