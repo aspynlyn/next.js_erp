@@ -74,10 +74,12 @@ type PurchaseOrderFormItem = {
   productId: string;
   quantity: string;
   unitPrice: string;
+  productKeyword: string;
 };
 
 type PurchaseOrderForm = {
   partnerId: string;
+  partnerKeyword: string;
   items: PurchaseOrderFormItem[];
 };
 
@@ -91,11 +93,13 @@ const PAGE_SIZE = 8;
 
 const initialForm: PurchaseOrderForm = {
   partnerId: '',
+  partnerKeyword: '',
   items: [
     {
       productId: '',
       quantity: '1',
       unitPrice: '',
+      productKeyword: '',
     },
   ],
 };
@@ -319,7 +323,8 @@ export default function PurchaseOrdersPage() {
       }
 
       const items = Array.isArray(data.items) ? data.items : [];
-      setProducts(items);
+      const saleProducts = items.filter((product: Product) => product.isSale);
+      setProducts(saleProducts);
     } catch (error) {
       console.error(error);
       setListError(
@@ -385,6 +390,53 @@ export default function PurchaseOrdersPage() {
     }));
   };
 
+  const getFilteredSuppliers = (keyword: string) => {
+    const trimmedKeyword = keyword.trim().toLowerCase();
+
+    if (!trimmedKeyword) {
+      return suppliers;
+    }
+
+    return suppliers.filter((partner) => {
+      return (
+        partner.name.toLowerCase().includes(trimmedKeyword) ||
+        partner.phone.toLowerCase().includes(trimmedKeyword)
+      );
+    });
+  };
+
+  const handleChangePartnerKeyword = (value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      partnerKeyword: value,
+      partnerId: '',
+    }));
+
+    setFormErrors((prev) => ({
+      ...prev,
+      partnerId: '',
+      submit: '',
+    }));
+  };
+
+  const handleSelectPartner = (partnerId: string) => {
+    const selectedPartner = suppliers.find(
+      (partner) => String(partner.id) === partnerId,
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      partnerId,
+      partnerKeyword: selectedPartner ? selectedPartner.name : '',
+    }));
+
+    setFormErrors((prev) => ({
+      ...prev,
+      partnerId: '',
+      submit: '',
+    }));
+  };
+
   const handleChangeItem = (
     index: number,
     key: keyof PurchaseOrderFormItem,
@@ -396,16 +448,6 @@ export default function PurchaseOrdersPage() {
         ...nextItems[index],
         [key]: value,
       };
-
-      if (key === 'productId') {
-        const selectedProduct = products.find(
-          (product) => String(product.id) === value,
-        );
-
-        if (selectedProduct) {
-          nextItems[index].unitPrice = String(selectedProduct.price);
-        }
-      }
 
       return {
         ...prev,
@@ -420,6 +462,73 @@ export default function PurchaseOrdersPage() {
     }));
   };
 
+  const handleChangeProductKeyword = (index: number, value: string) => {
+    setForm((prev) => {
+      const nextItems = [...prev.items];
+      nextItems[index] = {
+        ...nextItems[index],
+        productKeyword: value,
+        productId: value ? nextItems[index].productId : '',
+      };
+
+      return {
+        ...prev,
+        items: nextItems,
+      };
+    });
+
+    setFormErrors((prev) => ({
+      ...prev,
+      items: '',
+      submit: '',
+    }));
+  };
+
+  const handleSelectProduct = (index: number, productId: string) => {
+    const selectedProduct = products.find(
+      (product) => String(product.id) === productId,
+    );
+
+    setForm((prev) => {
+      const nextItems = [...prev.items];
+
+      nextItems[index] = {
+        ...nextItems[index],
+        productId,
+        unitPrice: selectedProduct ? String(selectedProduct.price) : '',
+        productKeyword: selectedProduct
+          ? `${selectedProduct.code} | ${selectedProduct.name}`
+          : '',
+      };
+
+      return {
+        ...prev,
+        items: nextItems,
+      };
+    });
+
+    setFormErrors((prev) => ({
+      ...prev,
+      items: '',
+      submit: '',
+    }));
+  };
+
+  const getFilteredProducts = (keyword: string) => {
+    const trimmedKeyword = keyword.trim().toLowerCase();
+
+    if (!trimmedKeyword) {
+      return products;
+    }
+
+    return products.filter((product) => {
+      return (
+        product.code.toLowerCase().includes(trimmedKeyword) ||
+        product.name.toLowerCase().includes(trimmedKeyword)
+      );
+    });
+  };
+
   const handleAddItemRow = () => {
     setForm((prev) => ({
       ...prev,
@@ -429,6 +538,8 @@ export default function PurchaseOrdersPage() {
           productId: '',
           quantity: '1',
           unitPrice: '',
+          productKeyword: '',
+          isDropdownOpen: false,
         },
       ],
     }));
@@ -593,7 +704,9 @@ export default function PurchaseOrdersPage() {
         );
       }
 
-      setPurchaseOrders(Array.isArray(refreshData.items) ? refreshData.items : []);
+      setPurchaseOrders(
+        Array.isArray(refreshData.items) ? refreshData.items : [],
+      );
       setTotalPages(Number(refreshData.totalPages ?? 1));
       setCurrentPage(Number(refreshData.currentPage ?? currentPage));
 
@@ -699,48 +812,56 @@ export default function PurchaseOrdersPage() {
                   </span>
                 </div>
 
-<div className="mt-4 grid grid-cols-[minmax(0,2.2fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(140px,1fr)_auto] items-center gap-4 rounded-xl bg-[var(--color-background)] p-4">
-<div className="min-w-0">
-  <p className="text-[11px] text-[var(--color-text-muted)]">품목</p>
-  <p className="mt-1 truncate text-[14px] font-semibold text-[var(--color-text-primary)]">
-    {getItemSummaryText(order)}
-  </p>
-</div>
+                <div className="mt-4 grid grid-cols-[minmax(0,2.2fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(140px,1fr)_auto] items-center gap-4 rounded-xl bg-[var(--color-background)] p-4">
+                  <div className="min-w-0">
+                    <p className="text-[11px] text-[var(--color-text-muted)]">
+                      품목
+                    </p>
+                    <p className="mt-1 truncate text-[14px] font-semibold text-[var(--color-text-primary)]">
+                      {getItemSummaryText(order)}
+                    </p>
+                  </div>
 
-<div className="min-w-0">
-  <p className="text-[11px] text-[var(--color-text-muted)]">총 상품 수</p>
-  <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
-    {order.purchaseOrderProducts.length}건
-  </p>
-</div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] text-[var(--color-text-muted)]">
+                      총 상품 수
+                    </p>
+                    <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
+                      {order.purchaseOrderProducts.length}건
+                    </p>
+                  </div>
 
-<div className="min-w-0">
-  <p className="text-[11px] text-[var(--color-text-muted)]">총 수량</p>
-  <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
-    {order.purchaseOrderProducts.reduce(
-      (acc, item) => acc + item.quantity,
-      0,
-    )}
-    개
-  </p>
-</div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] text-[var(--color-text-muted)]">
+                      총 수량
+                    </p>
+                    <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
+                      {order.purchaseOrderProducts.reduce(
+                        (acc, item) => acc + item.quantity,
+                        0,
+                      )}
+                      개
+                    </p>
+                  </div>
 
-<div className="min-w-0">
-  <p className="text-[11px] text-[var(--color-text-muted)]">총 금액</p>
-  <p className="mt-1 whitespace-nowrap text-[15px] font-semibold text-[var(--color-text-primary)]">
-    {formatPrice(getOrderTotalPrice(order))}
-  </p>
-</div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] text-[var(--color-text-muted)]">
+                      총 금액
+                    </p>
+                    <p className="mt-1 whitespace-nowrap text-[15px] font-semibold text-[var(--color-text-primary)]">
+                      {formatPrice(getOrderTotalPrice(order))}
+                    </p>
+                  </div>
 
                   <div className="flex items-center justify-end self-stretch">
-  <button
-    type="button"
-    onClick={() => openDetailModal(order)}
-    className="rounded-lg border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-2 text-[14px] font-semibold text-[var(--color-text-primary)] shadow-sm transition hover:bg-[var(--color-surface)]"
-  >
-    상세보기
-  </button>
-</div>
+                    <button
+                      type="button"
+                      onClick={() => openDetailModal(order)}
+                      className="rounded-lg border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-2 text-[14px] font-semibold text-[var(--color-text-primary)] shadow-sm transition hover:bg-[var(--color-surface)]"
+                    >
+                      상세보기
+                    </button>
+                  </div>
                 </div>
               </div>
             ))
@@ -783,41 +904,49 @@ export default function PurchaseOrdersPage() {
                   생성일 {formatDate(order.createdAt)}
                 </p>
 
-<div className="mt-4 rounded-xl bg-[var(--color-background)] p-4">
-  <div className="grid grid-cols-2 gap-x-4 gap-y-4">
-    <div className="min-w-0">
-      <p className="text-[12px] text-[var(--color-text-muted)]">품목</p>
-      <p className="mt-1 truncate text-[15px] font-semibold text-[var(--color-text-primary)]">
-        {getItemSummaryText(order)}
-      </p>
-    </div>
+                <div className="mt-4 rounded-xl bg-[var(--color-background)] p-4">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+                    <div className="min-w-0">
+                      <p className="text-[12px] text-[var(--color-text-muted)]">
+                        품목
+                      </p>
+                      <p className="mt-1 truncate text-[15px] font-semibold text-[var(--color-text-primary)]">
+                        {getItemSummaryText(order)}
+                      </p>
+                    </div>
 
-    <div>
-      <p className="text-[12px] text-[var(--color-text-muted)]">총 상품 수</p>
-      <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
-        {order.purchaseOrderProducts.length}건
-      </p>
-    </div>
+                    <div>
+                      <p className="text-[12px] text-[var(--color-text-muted)]">
+                        총 상품 수
+                      </p>
+                      <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
+                        {order.purchaseOrderProducts.length}건
+                      </p>
+                    </div>
 
-    <div>
-      <p className="text-[12px] text-[var(--color-text-muted)]">총 수량</p>
-      <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
-        {order.purchaseOrderProducts.reduce(
-          (acc, item) => acc + item.quantity,
-          0,
-        )}
-        개
-      </p>
-    </div>
+                    <div>
+                      <p className="text-[12px] text-[var(--color-text-muted)]">
+                        총 수량
+                      </p>
+                      <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
+                        {order.purchaseOrderProducts.reduce(
+                          (acc, item) => acc + item.quantity,
+                          0,
+                        )}
+                        개
+                      </p>
+                    </div>
 
-    <div>
-      <p className="text-[12px] text-[var(--color-text-muted)]">총 금액</p>
-      <p className="mt-1 whitespace-nowrap text-[17px] font-bold text-[var(--color-text-primary)]">
-        {formatPrice(getOrderTotalPrice(order))}
-      </p>
-    </div>
-  </div>
-</div>
+                    <div>
+                      <p className="text-[12px] text-[var(--color-text-muted)]">
+                        총 금액
+                      </p>
+                      <p className="mt-1 whitespace-nowrap text-[17px] font-bold text-[var(--color-text-primary)]">
+                        {formatPrice(getOrderTotalPrice(order))}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 <button
                   type="button"
@@ -940,29 +1069,43 @@ export default function PurchaseOrdersPage() {
             )}
 
             <div className="mb-5">
-              <label className="mb-2 block text-[14px] md:text-[13px] font-semibold text-[var(--color-text-secondary)]">
+              <label className="mb-2 block text-[13px] font-semibold text-[var(--color-text-secondary)]">
                 공급사
               </label>
-              <div className="relative">
-                <select
-                  value={form.partnerId}
-                  onChange={(e) => handleChangePartner(e.target.value)}
-                  className={`${getInputClass(!!formErrors.partnerId)} appearance-none pr-11 font-medium`}
-                >
-                  <option value="">공급사를 선택해 주세요.</option>
-                  {suppliers.map((supplier) => (
-                    <option key={supplier.id} value={supplier.id}>
-                      {supplier.name}
-                    </option>
-                  ))}
-                </select>
 
-                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[var(--color-primary)]">
-                  ▼
-                </span>
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={form.partnerKeyword}
+                  onChange={(e) => handleChangePartnerKeyword(e.target.value)}
+                  placeholder="공급사명을 검색해 주세요."
+                  className={getInputClass(!!formErrors.partnerId)}
+                />
+
+                <div className="relative">
+                  <select
+                    value={form.partnerId}
+                    onChange={(e) => handleSelectPartner(e.target.value)}
+                    className={`${getInputClass(!!formErrors.partnerId)} appearance-none pr-11 font-medium`}
+                  >
+                    <option value="">공급사를 선택해 주세요.</option>
+                    {getFilteredSuppliers(form.partnerKeyword).map(
+                      (supplier) => (
+                        <option key={supplier.id} value={supplier.id}>
+                          {supplier.name}
+                        </option>
+                      ),
+                    )}
+                  </select>
+
+                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[var(--color-primary)]">
+                    ▼
+                  </span>
+                </div>
               </div>
+
               {formErrors.partnerId && (
-                <p className="mt-1 text-[12px] md:text-[11px] text-[var(--color-danger)]">
+                <p className="mt-1 text-[11px] text-[var(--color-danger)]">
                   {formErrors.partnerId}
                 </p>
               )}
@@ -1012,31 +1155,41 @@ export default function PurchaseOrdersPage() {
                       className="border-b border-[var(--color-border)] last:border-b-0"
                     >
                       <td className="px-4 py-3">
-                        <div className="relative">
-                          <select
-                            value={item.productId}
+                        <div className="space-y-2">
+                          <input
+                            type="text"
+                            value={item.productKeyword}
                             onChange={(e) =>
-                              handleChangeItem(
-                                index,
-                                'productId',
-                                e.target.value,
-                              )
+                              handleChangeProductKeyword(index, e.target.value)
                             }
-                            className={`${getInputClass(false)} appearance-none pr-11 font-medium`}
-                          >
-                            <option value="">상품을 선택해 주세요.</option>
-                            {products.map((product) => (
-                              <option key={product.id} value={product.id}>
-                                {product.code} | {product.name}
-                              </option>
-                            ))}
-                          </select>
-                          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[var(--color-primary)]">
-                            ▼
-                          </span>
+                            placeholder="상품코드 또는 상품명을 검색해 주세요."
+                            className={getInputClass(false)}
+                          />
+
+                          <div className="relative">
+                            <select
+                              value={item.productId}
+                              onChange={(e) =>
+                                handleSelectProduct(index, e.target.value)
+                              }
+                              className={`${getInputClass(false)} appearance-none pr-11 font-medium`}
+                            >
+                              <option value="">상품을 선택해 주세요.</option>
+                              {getFilteredProducts(item.productKeyword).map(
+                                (product) => (
+                                  <option key={product.id} value={product.id}>
+                                    {product.code} | {product.name}
+                                  </option>
+                                ),
+                              )}
+                            </select>
+
+                            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[var(--color-primary)]">
+                              ▼
+                            </span>
+                          </div>
                         </div>
                       </td>
-
                       <td className="px-4 py-3">
                         <input
                           type="number"
@@ -1090,24 +1243,40 @@ export default function PurchaseOrdersPage() {
                       <label className="mb-2 block text-[13px] font-semibold text-[var(--color-text-secondary)]">
                         상품
                       </label>
-                      <div className="relative">
-                        <select
-                          value={item.productId}
+
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={item.productKeyword}
                           onChange={(e) =>
-                            handleChangeItem(index, 'productId', e.target.value)
+                            handleChangeProductKeyword(index, e.target.value)
                           }
-                          className={`${getInputClass(false)} appearance-none pr-11 font-medium`}
-                        >
-                          <option value="">상품을 선택해 주세요.</option>
-                          {products.map((product) => (
-                            <option key={product.id} value={product.id}>
-                              {product.code} | {product.name}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[var(--color-primary)]">
-                          ▼
-                        </span>
+                          placeholder="상품코드 또는 상품명을 검색해 주세요."
+                          className={getInputClass(false)}
+                        />
+
+                        <div className="relative">
+                          <select
+                            value={item.productId}
+                            onChange={(e) =>
+                              handleSelectProduct(index, e.target.value)
+                            }
+                            className={`${getInputClass(false)} appearance-none pr-11 font-medium`}
+                          >
+                            <option value="">상품을 선택해 주세요.</option>
+                            {getFilteredProducts(item.productKeyword).map(
+                              (product) => (
+                                <option key={product.id} value={product.id}>
+                                  {product.code} | {product.name}
+                                </option>
+                              ),
+                            )}
+                          </select>
+
+                          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[var(--color-primary)]">
+                            ▼
+                          </span>
+                        </div>
                       </div>
                     </div>
 
