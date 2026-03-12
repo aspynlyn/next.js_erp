@@ -117,6 +117,8 @@ export default function PurchaseOrdersPage() {
   const [loading, setLoading] = useState(false);
   const [listError, setListError] = useState('');
 
+  const [detailError, setDetailError] = useState('');
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder | null>(
@@ -354,11 +356,13 @@ export default function PurchaseOrdersPage() {
   };
 
   const openDetailModal = (order: PurchaseOrder) => {
+    setDetailError('');
     setSelectedOrder(order);
     setIsDetailModalOpen(true);
   };
 
   const closeDetailModal = () => {
+    setDetailError('');
     setSelectedOrder(null);
     setIsDetailModalOpen(false);
   };
@@ -659,6 +663,7 @@ export default function PurchaseOrdersPage() {
     status: PurchaseOrderStatus,
   ) => {
     try {
+      setDetailError('');
       const response = await fetch(
         `/api/purchase-orders/${purchaseOrderId}/status`,
         {
@@ -721,7 +726,7 @@ export default function PurchaseOrdersPage() {
       }
     } catch (error) {
       console.error(error);
-      setListError(
+      setDetailError(
         error instanceof Error
           ? error.message
           : '발주 상태 변경 중 오류가 발생했습니다.',
@@ -1388,6 +1393,11 @@ export default function PurchaseOrdersPage() {
               </button>
             </div>
 
+            {detailError && (
+              <div className="mb-4 rounded-lg border border-[var(--color-danger)] bg-[var(--color-white)] px-4 py-3 text-[15px] md:text-[14px] text-[var(--color-danger)]">
+                {detailError}
+              </div>
+            )}
             <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl bg-[var(--color-background)] p-4 md:grid-cols-4">
               <div>
                 <p className="text-[12px] md:text-[11px] text-[var(--color-text-muted)]">
@@ -1591,7 +1601,7 @@ export default function PurchaseOrdersPage() {
                       }
                       className="rounded-lg border border-[var(--color-danger)] bg-[var(--color-white)] px-4 py-3 text-[15px] md:text-[14px] font-semibold text-[var(--color-danger)]"
                     >
-                      취소
+                      취소 처리
                     </button>
                   )}
                 </div>

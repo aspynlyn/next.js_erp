@@ -59,7 +59,7 @@ export default function AdminLayout({
     },
     {
       name: '재고 관리',
-      href: '/admin/inventory',
+      href: '/admin/stocks',
       title: '재고 관리',
       description: '현재 재고 현황과 입출고 상태를 확인할 수 있습니다.',
     },

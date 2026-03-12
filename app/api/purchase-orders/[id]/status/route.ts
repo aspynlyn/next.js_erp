@@ -61,10 +61,7 @@ export async function PATCH(
       );
     }
 
-    if (
-      purchaseOrder.status === 'DRAFT' &&
-      nextStatus === 'COMPLETED'
-    ) {
+    if (purchaseOrder.status === 'DRAFT' && nextStatus === 'COMPLETED') {
       return NextResponse.json(
         { message: '초안 상태에서는 바로 완료 처리할 수 없습니다.' },
         { status: 400 },
@@ -97,7 +94,7 @@ export async function PATCH(
 
       if (nextStatus === 'COMPLETED') {
         for (const item of purchaseOrder.purchaseOrderProducts) {
-          await tx.product.update({
+          const updatedProduct = await tx.product.update({
             where: {
               id: item.productId,
             },
@@ -115,6 +112,7 @@ export async function PATCH(
               type: 'IN',
               memo: `발주 입고 처리 (발주번호: ${purchaseOrderId})`,
               refId: purchaseOrderId,
+              stockAfter: updatedProduct.currentStock,
             },
           });
         }
@@ -127,7 +125,9 @@ export async function PATCH(
   } catch (error) {
     console.error('발주 상태 변경 오류:', error);
     return NextResponse.json(
-      { message: '발주 상태 변경 중 오류가 발생했습니다.' },
+      {
+        message: '발주 상태 변경 중 오류가 발생했습니다.',
+      },
       { status: 500 },
     );
   }

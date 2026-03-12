@@ -55,20 +55,14 @@ export async function PATCH(
       );
     }
 
-    if (
-      saleOrder.status === 'COMPLETED' ||
-      saleOrder.status === 'CANCELED'
-    ) {
+    if (saleOrder.status === 'COMPLETED' || saleOrder.status === 'CANCELED') {
       return NextResponse.json(
         { message: '완료 또는 취소된 주문서는 상태를 변경할 수 없습니다.' },
         { status: 400 },
       );
     }
 
-    if (
-      saleOrder.status === 'RECEIVED' &&
-      nextStatus === 'COMPLETED'
-    ) {
+    if (saleOrder.status === 'RECEIVED' && nextStatus === 'COMPLETED') {
       return NextResponse.json(
         { message: '접수 상태에서는 바로 완료 처리할 수 없습니다.' },
         { status: 400 },
@@ -115,7 +109,7 @@ export async function PATCH(
 
       if (nextStatus === 'COMPLETED') {
         for (const item of saleOrder.saleOrderProducts) {
-          await tx.product.update({
+          const updatedProduct = await tx.product.update({
             where: {
               id: item.productId,
             },
@@ -133,6 +127,7 @@ export async function PATCH(
               type: 'OUT',
               memo: `주문 출고 처리 (주문번호: ${saleOrderId})`,
               refId: saleOrderId,
+              stockAfter: updatedProduct.currentStock,
             },
           });
         }

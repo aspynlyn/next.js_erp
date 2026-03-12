@@ -415,7 +415,7 @@ export default function partnersPage() {
                           <button
                             type="button"
                             onClick={() => openEditModal(Partner.id)}
-                            className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-[14px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-surface)]"
+                            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-2 text-[14px] font-semibold text-[var(--color-text-primary)] shadow-sm transition hover:bg-[var(--color-surface)]"
                           >
                             수정
                           </button>
@@ -490,7 +490,7 @@ export default function partnersPage() {
                 <button
                   type="button"
                   onClick={() => openEditModal(Partner.id)}
-                  className="mt-4 rounded-lg border border-[var(--color-border)] py-2.5 text-[14px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-surface)]"
+                  className="mt-4 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-white)] py-2.5 text-[14px] font-semibold text-[var(--color-text-primary)] shadow-sm transition hover:bg-[var(--color-surface)]"
                 >
                   수정
                 </button>
