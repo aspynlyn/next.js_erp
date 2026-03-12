@@ -54,7 +54,8 @@ export default function AdminLayout({
     {
       name: '주문 관리',
       href: '/admin/sales-orders',
-      title: '주문 내역과 진행 상태를 관리할 수 있습니다.',
+      title: '주문 관리',
+      description: '주문 내역과 진행 상태를 관리할 수 있습니다.',
     },
     {
       name: '재고 관리',

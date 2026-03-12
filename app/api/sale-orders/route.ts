@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
       if (Number(item.quantity) > product.currentStock) {
         return NextResponse.json(
           {
-            message: `${product.name}의 재고가 부족하여 주문을 등록할 수 없습니다.`,
+            message: `${product.name}은(는) ${product.currentStock}개 이하로 주문해 주세요.`,
           },
           { status: 400 },
         );
