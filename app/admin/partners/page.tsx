@@ -431,11 +431,11 @@ export default function partnersPage() {
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:hidden">
           {loading ? (
-            <div className="col-span-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-10 text-center text-[14px] text-[var(--color-text-secondary)] sm:col-span-2">
+            <div className="col-span-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-10 text-center text-[15px] text-[var(--color-text-secondary)] sm:col-span-2">
               거래처 목록을 불러오는 중입니다.
             </div>
           ) : partners.length === 0 ? (
-            <div className="col-span-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-10 text-center text-[14px] text-[var(--color-text-secondary)] sm:col-span-2">
+            <div className="col-span-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-4 py-10 text-center text-[15px] text-[var(--color-text-secondary)] sm:col-span-2">
               조회된 거래처가 없습니다.
             </div>
           ) : (
@@ -446,16 +446,16 @@ export default function partnersPage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="truncate text-[11px] text-[var(--color-text-muted)]">
+                    <p className="truncate text-[12px] text-[var(--color-text-muted)]">
                       {getPartnerTypeLabel(Partner.type)}
                     </p>
-                    <p className="mt-1 truncate text-[14px] font-semibold text-[var(--color-text-primary)]">
+                    <p className="mt-1 truncate text-[15px] font-semibold text-[var(--color-text-primary)]">
                       {Partner.name}
                     </p>
                   </div>
 
                   <span
-                    className={`shrink-0 rounded-full border px-2 py-[2px] text-[10px] font-semibold ${
+                    className={`shrink-0 rounded-full border px-2 py-[2px] text-[11px] font-semibold ${
                       Partner.isActive
                         ? 'border-[var(--color-success)] text-[var(--color-success)]'
                         : 'border-[var(--color-danger)] text-[var(--color-danger)]'
@@ -467,7 +467,7 @@ export default function partnersPage() {
 
                 <div className="my-3 h-px bg-[var(--color-border)]" />
 
-                <div className="space-y-1 text-[12px]">
+                <div className="space-y-2 text-[13px]">
                   <div className="flex items-center justify-between">
                     <span className="text-[var(--color-text-muted)]">
                       연락처
@@ -490,7 +490,7 @@ export default function partnersPage() {
                 <button
                   type="button"
                   onClick={() => openEditModal(Partner.id)}
-                  className="mt-4 rounded-lg border border-[var(--color-border)] py-2 text-[13px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-surface)]"
+                  className="mt-4 rounded-lg border border-[var(--color-border)] py-2.5 text-[14px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-surface)]"
                 >
                   수정
                 </button>
@@ -560,12 +560,12 @@ export default function partnersPage() {
               type="button"
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="h-10 rounded-lg px-3 text-[14px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background)] disabled:cursor-not-allowed disabled:text-[var(--color-text-muted)] disabled:hover:bg-transparent"
+              className="h-10 rounded-lg px-3 text-[15px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background)] disabled:cursor-not-allowed disabled:text-[var(--color-text-muted)] disabled:hover:bg-transparent"
             >
               이전
             </button>
 
-            <span className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+            <span className="text-[15px] font-semibold text-[var(--color-text-primary)]">
               {currentPage} / {totalPages}
             </span>
 
@@ -573,7 +573,7 @@ export default function partnersPage() {
               type="button"
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="h-10 rounded-lg px-3 text-[14px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background)] disabled:cursor-not-allowed disabled:text-[var(--color-text-muted)] disabled:hover:bg-transparent"
+              className="h-10 rounded-lg px-3 text-[15px] font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background)] disabled:cursor-not-allowed disabled:text-[var(--color-text-muted)] disabled:hover:bg-transparent"
             >
               다음
             </button>

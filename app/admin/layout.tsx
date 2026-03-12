@@ -48,7 +48,8 @@ export default function AdminLayout({
     {
       name: '발주 관리',
       href: '/admin/purchase-orders',
-      title: '발주 내역과 진행 상태를 관리할 수 있습니다.',
+      title: '발주 관리',
+      description: '발주 내역과 진행 상태를 관리할 수 있습니다.',
     },
     {
       name: '주문 관리',
